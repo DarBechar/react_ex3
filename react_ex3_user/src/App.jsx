@@ -4,16 +4,18 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import UserContextProvider from "./UserContextProvider";
 import LoginComp from "./LoginComp";
+import RegisterComp from "./RegisterComp";
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
+    <div className="">
       <UserContextProvider>
-        <LoginComp></LoginComp>
+        {/* <LoginComp></LoginComp> */}
+        <RegisterComp />
       </UserContextProvider>
-    </>
+    </div>
   );
 }
 

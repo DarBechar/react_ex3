@@ -1,125 +1,99 @@
 import { useContext } from "react";
 import React, { useState } from "react";
-
 import { UserContext } from "./UserContextProvider";
-import { User, Lock, Mail, MapPin, Home, Calendar } from "lucide-react";
+
+import Logo from './assets/Logo.png';
 
 export default function LoginComp(props) {
   const { AddUser } = useContext(UserContext);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#6571E9] p-4">
-      <div className="flex w-full max-w-5xl rounded-2xl bg-white shadow-2xl">
-        {/* Left Side - Image */}
-        <div className="hidden w-1/2 items-center justify-center bg-[#6571E9] p-12 lg:flex">
+    <div className="absolute top-0 left-0 w-full min-h-scree bg-gradient-to-br from-amber-700 to-amber-400">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-32 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            src="/api/placeholder/400/320"
-            alt="Nike Shoe"
-            className="max-w-md transform hover:scale-105 transition-transform"
+            alt="Logo"
+            src={Logo}
+            className="mx-auto h-20 w-auto"
           />
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-100">
+            Sign in to your account
+          </h2>
         </div>
 
-        {/* Right Side - Form */}
-        <div className="w-full p-8 lg:w-1/2">
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
-          </div>
-
-          <form className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <input
-                type="text"
-                placeholder="First Name"
-                className="w-full rounded-lg border border-gray-200 p-3"
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                className="w-full rounded-lg border border-gray-200 p-3"
-              />
-            </div>
-
-            <div className="relative">
-              <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Username"
-                className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-              />
-            </div>
-
-            <div className="relative">
-              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-              />
-            </div>
-
-            <div className="relative">
-              <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-              />
-            </div>
-
-            <div className="relative">
-              <Calendar className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-              <input
-                type="date"
-                className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="City"
-                  className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-                />
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <div className="bg-gray-200 p-8 rounded-lg shadow-md">
+            <form action="#" method="POST" className="space-y-6">
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Email address
+                  </label>
+                </div>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <Home className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Street"
-                  className="w-full rounded-lg border border-gray-200 p-3 pl-10"
-                />
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Password
+                  </label>
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-semibold text-purple-950 hover:text-purple-800"
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  />
+                </div>
               </div>
-            </div>
 
-            <input
-              type="text"
-              placeholder="House Number"
-              className="w-full rounded-lg border border-gray-200 p-3"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              className="w-full rounded-lg border border-gray-200 p-3"
-            />
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md bg-purple-950 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-purple-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Sign in
+                </button>
+              </div>
+            </form>
 
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-[#6571E9] p-3 text-white hover:bg-[#4F5BD5]"
-            >
-              Create Account
-            </button>
-
-            <div className="mt-6 text-center">
-              <span className="text-sm text-gray-600">
-                Already have an account?{" "}
-              </span>
-              <a href="#" className="text-sm text-[#6571E9] hover:underline">
-                Sign in
+            <p className="mt-10 text-center text-sm/6 text-gray-500">
+              Not a member?{" "}
+              <a
+                href="#"
+                className="font-semibold text-purple-950 hover:text-purple-800"
+              >
+                Sign Up Here
               </a>
-            </div>
-          </form>
+            </p>
+          </div>
         </div>
       </div>
     </div>
