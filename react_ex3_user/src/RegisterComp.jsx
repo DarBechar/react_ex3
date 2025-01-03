@@ -290,7 +290,7 @@ export default function RegisterComp(props) {
 
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-gray-900">Address</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label
                       htmlFor="city"
@@ -334,24 +334,24 @@ export default function RegisterComp(props) {
                       }
                     />
                   </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="houseNumber"
-                    className="block text-sm/6 font-medium text-gray-900"
-                  >
-                    House Number
-                  </label>
-                  <input
-                    id="houseNumber"
-                    name="houseNumber"
-                    type="text"
-                    required
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    onChange={(event) =>
-                      handleInputChange("houseNumber", event.target.value)
-                    }
-                  />
+                  <div>
+                    <label
+                      htmlFor="houseNumber"
+                      className="block text-sm/6 font-medium text-gray-900"
+                    >
+                      House Number
+                    </label>
+                    <input
+                      id="houseNumber"
+                      name="houseNumber"
+                      type="text"
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                      onChange={(event) =>
+                        handleInputChange("houseNumber", event.target.value)
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
