@@ -1,10 +1,15 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { UserContext } from "./UserContextProvider";
 
+import SuccessPopup from "./SuccessPopup";
 import Logo from "./assets/Logo.png";
 
 export default function RegisterComp(props) {
+  const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { users, AddUser } = useContext(UserContext);
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
@@ -24,109 +29,98 @@ export default function RegisterComp(props) {
     fetchCities();
   }, []);
 
-  console.log(cities);
-  const [submitted, setSubmitted] = useState(false);
-
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     username: "",
     password: "",
+    passwordConfirm: "",
     dateOfBirth: "",
     picture: null,
     city: "",
     street: "",
     houseNumber: "",
   });
-  const { AddUser } = useContext(UserContext);
 
+  //helper constatns for validating user data
   const englishAndSpecialCharsOnly =
     /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]*$/;
   const englishOnly = /^[a-zA-Z]+$/;
   const emailRegex = /^[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~.]+@[a-zA-Z0-9\-]+\.com$/;
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]{7,12}$/;
+  const birthDate = new Date(userData.dateOfBirth);
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const hebrewLettersOnly = /^[\u0590-\u05FF\s]*$/;
+  const numbersOnly = /^[1-9]\d*$/;
+  const validImageTypes = ["image/jpeg", "image/jpg"];
 
-  const FirstNameNotValid = submitted && englishOnly.test(userData.firstName);
-  const lastNameNotValid = submitted && englishOnly.test(userData.lastName);
-  const emailNotValid = submitted && emailRegex.test(userData.email);
+  //user data validation
+  const FirstNameNotValid =
+    userData.firstName != "" && !englishOnly.test(userData.firstName);
+  const lastNameNotValid =
+    userData.lastName != "" && !englishOnly.test(userData.lastName);
+  const emailNotValid =
+    userData.email != "" && !emailRegex.test(userData.email);
   const userNameNotValid =
-    submitted &&
-    userData.username.trim().length < 60 &&
-    englishAndSpecialCharsOnly.test(userData.username);
-  const passwordNotValid = submitted && passwordRegex.test(userData.password);
+    userData.username != "" &&
+    (userData.username.trim().length > 60 ||
+      !englishAndSpecialCharsOnly.test(userData.username));
+  const passwordNotMatch =
+    userData.passwordConfirm != "" &&
+    userData.password != userData.passwordConfirm;
+  const passwordNotValid =
+    userData.password != "" && !passwordRegex.test(userData.password);
+  const ageNotValid = userData.dateOfBirth != "" && (age <= 18 || age >= 120);
+  const streetNotValid =
+    userData.street != "" && !hebrewLettersOnly.test(userData.street);
+  const houseNumberNotValid =
+    userData.houseNumber != "" && !numbersOnly.test(userData.houseNumber);
+  const imageNotValid = userData.picture === "invalid";
 
   function handleInputChange(identifier, value) {
-    if (identifier === "fName") {
-      setUserData((prev) => ({
-        ...prev,
-        [firstName]: value,
-      }));
-    }
-    if (identifier === "lName") {
-      setUserData((prev) => ({
-        ...prev,
-        [lastName]: value,
-      }));
-    }
-    if (identifier === "lName") {
-      setUserData((prev) => ({
-        ...prev,
-        [lastName]: value,
-      }));
-    }
-    if (identifier === "email") {
-      setUserData((prev) => ({
-        ...prev,
-        [email]: value,
-      }));
-    }
-    if (identifier === "email") {
-      setUserData((prev) => ({
-        ...prev,
-        [email]: value,
-      }));
-    }
-    if (identifier === "username") {
-      setUserData((prev) => ({
-        ...prev,
-        [username]: value,
-      }));
-    }
-    if (identifier === "password") {
-      setUserData((prev) => ({
-        ...prev,
-        [password]: value,
-      }));
-    }
-    if (identifier === "dateOfBirth") {
-      setUserData((prev) => ({
-        ...prev,
-        [dateOfBirth]: value,
-      }));
-    }
-    if (identifier === "city") {
-      setUserData((prev) => ({
-        ...prev,
-        [city]: value,
-      }));
-    }
-    if (identifier === "street") {
-      setUserData((prev) => ({
-        ...prev,
-        [street]: value,
-      }));
-    }
-    if (identifier === "houseNumber") {
-      setUserData((prev) => ({
-        ...prev,
-        [houseNumber]: value,
-      }));
-    }
+    setUserData((prev) => ({
+      ...prev,
+      [identifier]: value,
+    }));
   }
 
-  (event) => handleInputChange("email", event.target.value);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && validImageTypes.includes(file.type)) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setUserData((prev) => ({ ...prev, picture: reader.result }));
+      };
+    } else {
+      setUserData((prev) => ({ ...prev, picture: "invalid" }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Check all validations
+    if (
+      !FirstNameNotValid &&
+      !lastNameNotValid &&
+      !emailNotValid &&
+      !userNameNotValid &&
+      !passwordNotValid &&
+      !passwordNotMatch &&
+      !ageNotValid &&
+      !streetNotValid &&
+      !houseNumberNotValid &&
+      !imageNotValid &&
+      userData.city !== ""
+    ) {
+      AddUser(userData);
+      setShowSuccess(true);
+    }
+  };
 
   return (
     <div className="absolute top-0 left-0 w-full min-h-screen bg-gradient-to-br from-amber-700 to-amber-400">
@@ -137,7 +131,7 @@ export default function RegisterComp(props) {
 
         <div className="mt-10 sm:mx-auto sm:w-full md:max-w-2xl">
           <div className="bg-gray-200 p-8 rounded-lg shadow-md">
-            <form action="#" method="POST" className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label
@@ -151,11 +145,16 @@ export default function RegisterComp(props) {
                     name="firstName"
                     type="text"
                     required
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-gray-300 [&:not(:placeholder-shown)]:bg-white sm:text-sm/6"
                     onChange={(event) =>
-                      handleInputChange("fName", event.target.value)
+                      handleInputChange("firstName", event.target.value)
                     }
                   />
+                  {FirstNameNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      First name must contain English letters only
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -171,9 +170,14 @@ export default function RegisterComp(props) {
                     required
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     onChange={(event) =>
-                      handleInputChange("lName", event.target.value)
+                      handleInputChange("lastName", event.target.value)
                     }
                   />
+                  {lastNameNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Last name must contain English letters only
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -195,6 +199,11 @@ export default function RegisterComp(props) {
                       handleInputChange("email", event.target.value)
                     }
                   />
+                  {emailNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Enter a valid email address ending with .com
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -213,6 +222,12 @@ export default function RegisterComp(props) {
                       handleInputChange("username", event.target.value)
                     }
                   />
+                  {userNameNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Username must be less than 60 characters and contain only
+                      English letters, numbers and special characters
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -234,6 +249,12 @@ export default function RegisterComp(props) {
                       handleInputChange("password", event.target.value)
                     }
                   />
+                  {passwordNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Password must be 7-12 characters with at least one
+                      uppercase letter, number, and special character
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -248,7 +269,15 @@ export default function RegisterComp(props) {
                     type="password"
                     required
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    onChange={(event) =>
+                      handleInputChange("passwordConfirm", event.target.value)
+                    }
                   />
+                  {passwordNotMatch && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Passwords do not match
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -266,7 +295,13 @@ export default function RegisterComp(props) {
                     type="file"
                     accept="image/*"
                     className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-950 file:text-white hover:file:bg-purple-800"
+                    onChange={handleImageChange}
                   />
+                  {imageNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Please upload only JPG or JPEG files
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -285,6 +320,11 @@ export default function RegisterComp(props) {
                       handleInputChange("dateOfBirth", event.target.value)
                     }
                   />
+                  {ageNotValid && (
+                    <p className="mt-1 text-sm text-red-500">
+                      Age must be between 18 and 120 years
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -333,6 +373,11 @@ export default function RegisterComp(props) {
                         handleInputChange("street", event.target.value)
                       }
                     />
+                    {streetNotValid && (
+                      <p className="mt-1 text-sm text-red-500">
+                        Street name must contain Hebrew letters only
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label
@@ -351,6 +396,11 @@ export default function RegisterComp(props) {
                         handleInputChange("houseNumber", event.target.value)
                       }
                     />
+                    {houseNumberNotValid && (
+                      <p className="mt-1 text-sm text-red-500">
+                        House number must be a positive number
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -362,12 +412,19 @@ export default function RegisterComp(props) {
                 Register
               </button>
             </form>
+            {showSuccess && (
+              <SuccessPopup
+                msg="Your account has been successfully created."
+                btn="Login to your account"
+                nav="/login"
+              />
+            )}
 
             <p className="mt-10 text-center text-sm/6 text-gray-500">
               Already have an account?{" "}
               <a
-                href="#"
-                className="font-semibold text-purple-950 hover:text-purple-800"
+                onClick={() => navigate("/login")}
+                className="font-semibold text-purple-950 hover:text-purple-800 cursor-pointer"
               >
                 Sign in here
               </a>

@@ -1,21 +1,26 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import UserContextProvider from "./UserContextProvider";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "./UserContextProvider";
 import LoginComp from "./LoginComp";
 import RegisterComp from "./RegisterComp";
+import ProfileComp from "./ProfileComp";
+import EditProfileComp from "./EditDetailsComp";
+import AdminProfile from "./AdminProfile";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { isEditing } = useContext(UserContext);
 
   return (
-    <div className="">
-      <UserContextProvider>
-        {/* <LoginComp></LoginComp> */}
-        <RegisterComp />
-      </UserContextProvider>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginComp />} />
+        <Route path="/register" element={<RegisterComp />} />
+        <Route path="/profile" element={<ProfileComp />} />
+        <Route path="/edit" element={<EditProfileComp />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/admin" element={<AdminProfile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
